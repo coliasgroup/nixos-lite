@@ -1,5 +1,5 @@
 { stdenv, overrideCC, lib, buildPackages, nukeReferences
-, nettools, bc, bison, flex, perl, rsync, gmp, libmpc, mpfr, openssl, libelf, utillinux, kmod, sparse
+, nettools, bc, bison, flex, perl, rsync, gmp, libmpc, mpfr, openssl, libelf, utillinux, kmod
 }:
 
 { source

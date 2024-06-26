@@ -39,7 +39,7 @@ let
 
   # Dependencies that are required to build kernel modules
   moduleBuildDependencies = [
-    libelf kmod sparse
+    libelf kmod
   ];
 
   defaultKernelFile = "${if kernelTarget == "zImage" then "vmlinuz" else "vmlinux"}-${source.version}${source.extraVersion}";
