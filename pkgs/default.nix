@@ -34,5 +34,4 @@ self: with self;
 
   raspios = callPackage ./platforms/raspberry-pi/raspios {};
   raspberry-pi-firmware = callPackage ./platforms/raspberry-pi/firmware {};
-
 }

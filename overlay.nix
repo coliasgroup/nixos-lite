@@ -16,7 +16,7 @@ self: super: with self; {
         otherSplices
         (_: {})
         (_: {})
-        (import ./scope.nix {
+        (import ./pkgs {
           inherit otherSplices;
         })
       ;
