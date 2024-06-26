@@ -11,3 +11,5 @@ void cleanup_module(void)
 {
 	printk(KERN_INFO "Goodbye, cruel world.\n");
 }
+
+MODULE_LICENSE("foo");
