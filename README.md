@@ -1,0 +1,5 @@
+# NixOS Lite
+
+```
+WIP
+```
