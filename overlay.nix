@@ -1,14 +1,8 @@
 self: super: with self; {
 
-  linuxHelpers =
+  nixosLite =
     let
-      otherSplices = {
-        selfBuildBuild = {};
-        selfBuildHost = pkgsBuildHost.linuxHelpers;
-        selfBuildTarget = {};
-        selfHostHost = pkgsHostHost.linuxHelpers;
-        selfTargetTarget = {};
-      };
+      otherSplices = generateSplicesForMkScope "nixosLite";
     in
       lib.makeScopeWithSplicing
         splicePackages
