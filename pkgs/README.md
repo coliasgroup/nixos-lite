@@ -1,6 +1,4 @@
-# nix-linux
-
-This repository contains a framework for configuring and building Linux and U-Boot using Nixpkgs.
+This directory contains a framework for configuring and building Linux and U-Boot using Nixpkgs.
 It also includes utilities for building out-of-tree kernel modules and various types of U-Boot images.
 
 The infrastructure for configuring and building Linux within Nixpkgs is a beast: [nixpkgs/pkgs/os-specific/linux/kernel](https://github.com/NixOS/nixpkgs/tree/e79d20c16e1bfc7b0d59f7ebca7b930dc529db63/pkgs/os-specific/linux/kernel).
