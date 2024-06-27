@@ -2,6 +2,7 @@
 , pkg-config, ncurses
 , bison, flex
 , python3Packages
+, linuxRustNativeBuildInputs, linuxRustEnv
 }:
 
 { source
@@ -13,7 +14,7 @@ let
   isCross = stdenv.hostPlatform != stdenv.buildPlatform;
 
 in
-stdenv.mkDerivation {
+stdenv.mkDerivation (linuxRustEnv // {
 
   name = "linux-config-env";
 
@@ -26,7 +27,7 @@ stdenv.mkDerivation {
   nativeBuildInputs = [
     bison flex
     python3Packages.kconfiglib
-  ];
+  ] ++ linuxRustNativeBuildInputs;
 
   makeFlags = [
     "-C" "${source}"
@@ -68,4 +69,4 @@ stdenv.mkDerivation {
     cp -v --no-preserve=mode,ownership ${config} .config
   '';
 
-}
+})

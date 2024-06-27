@@ -10,7 +10,7 @@ self: super: with self; {
         otherSplices
         (_: {})
         (_: {})
-        (import ./pkgs {
+        (callPackage ./pkgs {
           inherit otherSplices;
         })
       ;

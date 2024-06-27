@@ -12,6 +12,10 @@ rec {
     inherit kernel;
   };
 
+  helloRustModule = callPackage ./hello-rust-module {
+    inherit kernel;
+  };
+
   userland = nixosLite.eval {
     modules = [
       ./config.nix
@@ -21,10 +25,14 @@ rec {
             modules = [
               kernel.mod
               helloModule
+              helloRustModule
             ];
           };
 
-          includeModules = [ "hello" ];
+          includeModules = [
+            "hello"
+            "hello-rust"
+          ];
         };
       }
     ];

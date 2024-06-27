@@ -1,5 +1,6 @@
 { stdenv, lib, buildPackages
 , bison, flex
+, linuxRustNativeBuildInputs, linuxRustEnv
 }:
 
 { source
@@ -11,12 +12,12 @@ let
   isCross = stdenv.hostPlatform != stdenv.buildPlatform;
 
 in
-stdenv.mkDerivation {
+stdenv.mkDerivation (linuxRustEnv // {
 
   name = "linux-${source.version}${source.extraVersion}-olddefconfig.config";
 
   depsBuildBuild = [ buildPackages.stdenv.cc ];
-  nativeBuildInputs = [ bison flex ];
+  nativeBuildInputs = [ bison flex ] ++ linuxRustNativeBuildInputs;
 
   phases = [ "configurePhase" "buildPhase" ];
 
@@ -38,4 +39,4 @@ stdenv.mkDerivation {
     "olddefconfig"
   ];
 
-}
+})

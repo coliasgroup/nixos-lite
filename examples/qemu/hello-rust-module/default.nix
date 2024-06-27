@@ -1,20 +1,22 @@
 { lib
 , kernel
+, nixosLite
 }:
 
 let
   isCross = with kernel.stdenv; hostPlatform != buildPlatform;
 
+  inherit (nixosLite) linuxRustNativeBuildInputs linuxRustEnv;
 in
 
-kernel.stdenv.mkDerivation {
+kernel.stdenv.mkDerivation (linuxRustEnv // {
 
   name = "hello-module";
 
   NIX_NO_SELF_RPATH = true;
   hardeningDisable = [ "all" ];
 
-  nativeBuildInputs = kernel.moduleNativeBuildInputs;
+  nativeBuildInputs = kernel.moduleNativeBuildInputs ++ linuxRustNativeBuildInputs;
 
   dontFixup = true;
 
@@ -23,6 +25,7 @@ kernel.stdenv.mkDerivation {
   makeFlags =  [
     "C=${kernel.dev}"
     "ARCH=${kernel.kernelArch}"
+    "V=1"
   ] ++ lib.optionals isCross [
     "CROSS_COMPILE=${kernel.stdenv.cc.targetPrefix}"
   ];
@@ -43,4 +46,4 @@ kernel.stdenv.mkDerivation {
     rm $out/lib/modules/*/modules.*
   '';
 
-}
+})

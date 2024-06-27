@@ -8,18 +8,18 @@ let
         sha256 = "sha256:1bgarnk1akwzkmq6hc890zra6psqir1q44jsnc3j8xiaw6bdgyc7";
       };
 
-  # defaultNixpkgsPath =
-  #   let
-  #     rev = "1811c4fec88995679397d6fa20f4f3395a0bebe5";
-  #   in
-  #     builtins.fetchTarball {
-  #       url = "https://github.com/coliasgroup/nixpkgs/archive/refs/tags/keep/${builtins.substring 0 32 rev}.tar.gz";
-  #       sha256 = "sha256:0ad2c7vlr9fidzjjg8szigfhmp1gvlf62ckd6cir8ymrxc93pby7";
-  #     };
-
   # nixpkgsPath = ../../../../nixpkgs;
 
   nixpkgsPath = defaultNixpkgsPath;
+
+  fenixRev = "9af557bccdfa8fb6a425661c33dbae46afef0afa";
+  fenixSource = fetchTarball "https://github.com/nix-community/fenix/archive/${fenixRev}.tar.gz";
+  fenix = import fenixSource {};
+
+  fenixToolchain = fenix.fromToolchainName {
+    name = "1.78.0";
+    sha256 = "sha256-opUgs6ckUQCyDxcB9Wy51pqhd0MPGHUVbwRKKPGiwZU=";
+  };
 
   pkgs = import nixpkgsPath {
     crossSystem = {
@@ -28,6 +28,16 @@ let
     };
     overlays = [
       (import ../overlay.nix)
+      (self: super: {
+        nixosLite = super.nixosLite.overrideScope (scopeSelf: scopeSuper: {
+          linuxRustEnvironment = {
+            inherit (fenixToolchain) toolchain;
+            bindgen = scopeSelf.linux.bindgen_0_65_1.override {
+              clang = self.clang_13;
+            };
+          };
+        });
+      })
     ];
   };
 

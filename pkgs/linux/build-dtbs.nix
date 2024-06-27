@@ -5,16 +5,9 @@
 { source
 , config
 , kernelArch ? stdenv.hostPlatform.linuxArch
-, cc ? null
 }:
 
 let
-  stdenv_ = stdenv;
-in
-
-let
-  stdenv = if cc == null then stdenv_ else overrideCC stdenv_ cc;
-
   isCross = stdenv.hostPlatform != stdenv.buildPlatform;
 
 in
@@ -35,7 +28,9 @@ stdenv.mkDerivation {
     kmod
   ];
 
-  phases = [ "configurePhase" "buildPhase" "installPhase" ];
+  dontUnpack = true;
+  dontPatch = true;
+  dontFixup = true;
 
   configurePhase = ''
     cp -v ${config} .config

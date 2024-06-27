@@ -16,7 +16,10 @@ stdenv.mkDerivation {
   depsBuildBuild = [ buildPackages.stdenv.cc ];
   nativeBuildInputs = [ rsync ];
 
-  phases = [ "installPhase" ];
+  dontUnpack = true;
+  dontPatch = true;
+  dontConfigure = true;
+  dontFixup = true;
 
   makeFlags = [
     "-C" "${source}"
