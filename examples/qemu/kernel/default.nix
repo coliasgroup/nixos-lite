@@ -40,5 +40,6 @@ let
 
 in buildKernel rec {
   inherit source config;
+  modules = true;
   dtbs = true;
 }

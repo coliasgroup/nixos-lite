@@ -6,11 +6,31 @@
 
 rec {
 
-  kernel = callPackage ./kernel.nix {};
+  kernel = callPackage ./kernel {};
 
-  outOfTreeModule = callPackage ./module.nix {
+  helloModule = callPackage ./hello-module {
     inherit kernel;
   };
+
+  userland = nixosLite.eval {
+    modules = [
+      ./config.nix
+      {
+        initramfs = {
+          modules = nixosLite.linux.aggregateModules {
+            modules = [
+              kernel.mod
+              helloModule
+            ];
+          };
+
+          includeModules = [ "hello" ];
+        };
+      }
+    ];
+  };
+
+  inherit (userland.config.build) initramfs;
 
   bootArgs = [
     "console=ttyAMA0"
@@ -28,14 +48,6 @@ rec {
     "-initrd" initramfs
     "-append" "'${lib.concatStringsSep " " bootArgs}'"
   ];
-
-  userland = nixosLite.eval {
-    modules = [
-      ./config.nix
-    ];
-  };
-
-  inherit (userland.config.build) initramfs;
 
   simulate = pkgsBuildBuild.writeScript "simulate" ''
     #!${pkgsBuildBuild.runtimeShell}
