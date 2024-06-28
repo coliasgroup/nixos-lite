@@ -36,8 +36,6 @@ rec {
   };
 
   kernelPatches = {
-    many_modules = ./patches/many-modules.patch;
-    depmod_check = ./patches/depmod-check.patch;
     scriptconfig = ./patches/scriptconfig.patch;
   };
 
