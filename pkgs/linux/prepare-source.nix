@@ -1,6 +1,6 @@
-{ stdenv, writeText }:
+{ stdenv }:
 
-{ src, version, extraVersion ? "", ... } @ args:
+{ version, extraVersion ? "", ... } @ args:
 
 stdenv.mkDerivation ({
 

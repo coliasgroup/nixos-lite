@@ -5,8 +5,6 @@ self: with self;
 {
   inherit otherSplices;
 
-  kconfigCommon = callPackage ./kconfig-common {};
-
   linux = callPackage ./linux {};
 
   linuxRustEnvironment = null;

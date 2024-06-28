@@ -3,8 +3,7 @@
 , python3
 
 , linuxRustNativeBuildInputs, linuxRustEnv
-, kconfigCommon
-, configEnv, mkQueriable
+, configEnv, readConfig, mkQueries
 }:
 
 { source
@@ -140,7 +139,7 @@ stdenv.mkDerivation (finalAttrs: linuxRustEnv // {
     inherit (source) version;
     inherit stdenv moduleNativeBuildInputs;
     configFile = config;
-    config = mkQueriable (kconfigCommon.readConfig config);
+    config = mkQueries (readConfig (builtins.readFile config));
     kernel = "${finalAttrs.finalPackage.out}/${kernelFile}";
     inherit kernelFile;
     modDirVersion = source.version;

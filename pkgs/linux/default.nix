@@ -1,23 +1,30 @@
 { lib, callPackage
-, kconfigCommon
 }:
 
-let
+rec {
+
+  readConfig = contents:
+    let
+      lines = lib.splitString "\n" contents;
+      removeComments = lib.filter (line: line != "" && !(lib.hasPrefix "#" line));
+      parseLine = line:
+        let
+          match = builtins.match ''CONFIG_([^=]*)=(.*)'' line;
+        in
+          lib.nameValuePair (lib.elemAt match 0) (lib.elemAt match 1);
+    in
+      lib.listToAttrs (map parseLine (removeComments lines));
 
   mkQueries = config: with lib; rec {
-    isSet = attr: hasAttr attr config;
-    getValue = attr: if isSet attr then getAttr attr config else null;
-    isYes = attr: getValue attr == "y";
-    isNo = attr: getValue attr == "n";
-    isModule = attr: getValue attr == "m";
+    attrs = config;
+    isSet = attr: hasAttr attr attrs;
+    get = attr: if isSet attr then getAttr attr attrs else null;
+    isYes = attr: get attr == "y";
+    isNo = attr: get attr == "n";
+    isModule = attr: get attr == "m";
     isEnabled = attr: isModule attr || isYes attr;
-    isDisabled = attr: !isSet attr || isNo attr;
+    isDisabled = attr: !(isEnabled attr);
   };
-
-  mkQueriable = config: config // mkQueries config;
-
-in
-rec {
 
   getDefconfig = callPackage ./config/get-defconfig.nix {};
   makeConfig = callPackage ./config/make-allconfig.nix {};
@@ -32,7 +39,7 @@ rec {
   buildHeaders = callPackage ./build-headers.nix {};
   buildDtbs = callPackage ./build-dtbs.nix {};
   buildKernel = callPackage ./build-kernel.nix {
-    inherit kconfigCommon configEnv mkQueriable;
+    inherit readConfig mkQueries configEnv;
   };
 
   kernelPatches = {
