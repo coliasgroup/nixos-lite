@@ -6,13 +6,9 @@ let
   isCross = with kernel.stdenv; hostPlatform != buildPlatform;
 
 in
-
-kernel.stdenv.mkDerivation {
+kernel.stdenv.mkDerivation (kernel.moduleEnv // {
 
   name = "hello-module";
-
-  NIX_NO_SELF_RPATH = true;
-  hardeningDisable = [ "all" ];
 
   nativeBuildInputs = kernel.moduleNativeBuildInputs;
 
@@ -43,4 +39,4 @@ kernel.stdenv.mkDerivation {
     rm $out/lib/modules/*/modules.*
   '';
 
-}
+})

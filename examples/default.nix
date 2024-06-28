@@ -29,14 +29,16 @@ let
     overlays = [
       (import ../overlay.nix)
       (self: super: {
-        nixosLite = super.nixosLite.overrideScope (scopeSelf: scopeSuper: {
-          linuxRustEnvironment = {
-            inherit (fenixToolchain) toolchain;
-            bindgen = scopeSelf.linux.bindgen_0_65_1.override {
-              clang = self.clang_13;
+        nixosLite = super.nixosLite // {
+          linux = super.nixosLite.linux.overrideScope (scopeSelf: scopeSuper: {
+            linuxRustEnvironment = {
+              inherit (fenixToolchain) toolchain;
+              bindgen = scopeSelf.bindgen_0_65_1.override {
+                clang = self.clang_13;
+              };
             };
-          };
-        });
+          });
+        };
       })
     ];
   };

@@ -1,22 +1,16 @@
 { lib
 , kernel
-, nixosLite
 }:
 
 let
   isCross = with kernel.stdenv; hostPlatform != buildPlatform;
 
-  inherit (nixosLite) linuxRustNativeBuildInputs linuxRustEnv;
 in
-
-kernel.stdenv.mkDerivation (linuxRustEnv // {
+kernel.stdenv.mkDerivation (kernel.moduleEnv // {
 
   name = "hello-module";
 
-  NIX_NO_SELF_RPATH = true;
-  hardeningDisable = [ "all" ];
-
-  nativeBuildInputs = kernel.moduleNativeBuildInputs ++ linuxRustNativeBuildInputs;
+  nativeBuildInputs = kernel.moduleNativeBuildInputs;
 
   dontFixup = true;
 

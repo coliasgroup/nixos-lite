@@ -51,8 +51,4 @@ in (buildKernel {
   passthru = {
     inherit baseConfig baseDefConfig;
   };
-}).overrideAttrs (attrs: {
-  makeFlags = attrs.makeFlags ++ [
-    # "V=1"
-  ];
 })

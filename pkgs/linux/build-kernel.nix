@@ -30,7 +30,11 @@ in
 let
   isCross = stdenv.hostPlatform != stdenv.buildPlatform;
 
-  # Dependencies that are required to build kernel modules
+  moduleEnv = linuxRustEnv // {
+    NIX_NO_SELF_RPATH = true;
+    hardeningDisable = [ "all" ];
+  };
+
   moduleNativeBuildInputs = [
     libelf kmod
   ] ++ linuxRustNativeBuildInputs;
@@ -39,7 +43,7 @@ let
   kernelFile = if kernelFileArg != null then kernelFileArg else defaultKernelFile;
 
 in
-stdenv.mkDerivation (finalAttrs: linuxRustEnv // {
+stdenv.mkDerivation (finalAttrs: moduleEnv // {
 
   name = "linux-${source.fullVersion}";
 
@@ -137,7 +141,7 @@ stdenv.mkDerivation (finalAttrs: linuxRustEnv // {
   passthru = {
     inherit source kernelArch;
     inherit (source) version;
-    inherit stdenv moduleNativeBuildInputs;
+    inherit stdenv moduleNativeBuildInputs moduleEnv;
     configFile = config;
     config = mkQueries (readConfig (builtins.readFile config));
     kernel = "${finalAttrs.finalPackage.out}/${kernelFile}";

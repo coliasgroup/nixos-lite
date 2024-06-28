@@ -1,31 +1,42 @@
-{ lib, otherSplices }:
-
-self: with self;
+{ lib
+, callPackage
+, newScope
+, splicePackages
+, generateSplicesForMkScope
+}:
 
 {
-  inherit otherSplices;
+  eval = callPackage ./eval.nix {};
 
-  linux = callPackage ./linux {};
+  linux =
+    let
+      otherSplices = generateSplicesForMkScope "nixosLiteLinux";
+    in
+      lib.makeScopeWithSplicing
+        splicePackages
+        newScope
+        otherSplices
+        (_: {})
+        (_: {})
+        (callPackage ./linux {
+          inherit otherSplices;
+        })
+      ;
 
-  linuxRustEnvironment = null;
-
-  linuxRustNativeBuildInputs = lib.optionals (linuxRustEnvironment != null) (
-    with otherSplices.selfBuildBuild.linuxRustEnvironment; [
-      toolchain
-      bindgen
-    ]
-  );
-
-  linuxRustEnv = lib.optionalAttrs (linuxRustEnvironment != null) {
-    RUSTC = "rustc";
-    CARGO = "cargo";
-    BINDGEN = "bindgen";
-    LIBCLANG_PATH = "${otherSplices.selfBuildBuild.linuxRustEnvironment.bindgen.clang.cc.lib}/lib";
-  };
-
-  uBoot = callPackage ./u-boot {};
+  uBoot =
+    let
+      otherSplices = generateSplicesForMkScope "nixosLiteUBoot";
+    in
+      lib.makeScopeWithSplicing
+        splicePackages
+        newScope
+        otherSplices
+        (_: {})
+        (_: {})
+        (callPackage ./u-boot {
+          inherit otherSplices;
+        })
+      ;
 
   dtbHelpers = callPackage ./dtb-helpers {};
-
-  eval = callPackage ./eval.nix {};
 }

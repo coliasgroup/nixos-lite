@@ -1,6 +1,9 @@
-{ lib, callPackage, otherSplices }:
+{ lib, otherSplices }:
 
-rec {
+self: with self;
+
+{
+  inherit otherSplices;
 
   getDefconfig = callPackage ./config/get-defconfig.nix {};
   makeConfig = callPackage ./config/make-allconfig.nix {};
@@ -10,21 +13,10 @@ rec {
   olddefconfig = callPackage ./config/make-olddefconfig.nix {};
 
   prepareSource = callPackage ./prepare-source.nix {};
-  build = callPackage ./build.nix {
-    inherit configEnv;
-  };
-  buildTools = callPackage ./build-tools.nix {
-    inherit configEnv;
-  };
+  build = callPackage ./build.nix {};
+  buildTools = callPackage ./build-tools.nix {};
 
-  tools = callPackage ./tools {
-    inherit prepareSource makeConfig buildTools;
-  };
-  mkImage = callPackage ./mkimage.nix {
-    inherit (otherSplices.selfBuildHost.uBoot) tools;
-  };
-  mkImageFit = callPackage ./mkimage-fit.nix {
-    inherit (otherSplices.selfBuildHost.uBoot) tools;
-  };
-
+  tools = callPackage ./tools {};
+  mkImage = callPackage ./mkimage.nix {};
+  mkImageFit = callPackage ./mkimage-fit.nix {};
 }
