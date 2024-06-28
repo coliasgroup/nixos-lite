@@ -15,11 +15,17 @@ in {
 
   initramfs.extraInitCommands = ''
     curl example.com
+
     modprobe hello
     sleep 1
     rmmod hello
+
     modprobe hello-rust
     sleep 1
     rmmod hello-rust
+
+    modprobe big-rust
+    sleep 1
+    rmmod big-rust
   '';
 }

@@ -12,6 +12,7 @@ kernel.stdenv.mkDerivation (kernel.moduleEnv // {
 
   nativeBuildInputs = kernel.moduleNativeBuildInputs;
 
+  dontConfigure = true;
   dontFixup = true;
 
   src = lib.cleanSource ./src;

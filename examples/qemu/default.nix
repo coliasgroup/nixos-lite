@@ -17,6 +17,10 @@ rec {
     inherit kernel;
   };
 
+  bigRustModule = callPackage ./big-rust-module {
+    inherit kernel;
+  };
+
   userland = nixosLite.eval {
     modules = [
       ./config.nix
@@ -26,11 +30,13 @@ rec {
             kernel.mod
             helloModule
             helloRustModule
+            bigRustModule
           ];
 
           includeModules = [
             "hello"
             "hello-rust"
+            "big-rust"
           ];
         };
       }

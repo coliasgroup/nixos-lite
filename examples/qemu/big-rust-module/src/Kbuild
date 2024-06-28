@@ -1,0 +1,5 @@
+obj-m := big_rust.o
+
+# NOTE
+# RUSTFLAGS_REMOVE_big_rust.o :=
+# RUSTFLAGS_big_rust.o :=

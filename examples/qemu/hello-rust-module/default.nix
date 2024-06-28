@@ -8,10 +8,11 @@ let
 in
 kernel.stdenv.mkDerivation (kernel.moduleEnv // {
 
-  name = "hello-module";
+  name = "hello-rust-module";
 
   nativeBuildInputs = kernel.moduleNativeBuildInputs;
 
+  dontConfigure = true;
   dontFixup = true;
 
   src = lib.cleanSource ./src;
