@@ -41,9 +41,6 @@ rec {
     scriptconfig = ./patches/scriptconfig.patch;
   };
 
-  mkModulesClosure = callPackage ./mk-modules-closure.nix {};
-  aggregateModules = callPackage ./aggregate-modules.nix {};
-
   bindgen_0_65_1 = callPackage ./bindgen-0.65.1.nix {};
 
 }

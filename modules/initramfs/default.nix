@@ -10,7 +10,7 @@ let
   mkExtraUtils = pkgs.callPackage ./mk-extra-utils.nix {};
   mkNixInitramfs = pkgs.callPackage ./mk-nix-initramfs.nix {};
 
-  modulesClosure = pkgs.nixosLite.linux.mkModulesClosure {
+  modulesClosure = pkgs.makeModulesClosure {
     rootModules = allModules;
     kernel = cfg.modules;
     firmware = cfg.modules;

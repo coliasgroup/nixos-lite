@@ -1,6 +1,7 @@
 { lib
 , callPackage
 , pkgsBuildBuild
+, aggregateModules
 , nixosLite
 }:
 
@@ -21,13 +22,11 @@ rec {
       ./config.nix
       {
         initramfs = {
-          modules = nixosLite.linux.aggregateModules {
-            modules = [
-              kernel.mod
-              helloModule
-              helloRustModule
-            ];
-          };
+          modules = aggregateModules [
+            kernel.mod
+            helloModule
+            helloRustModule
+          ];
 
           includeModules = [
             "hello"
