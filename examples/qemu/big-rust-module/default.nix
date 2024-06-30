@@ -1,49 +1,46 @@
 { lib
+, buildPackages
 , runCommand
 , rustPlatform
-, remarshal
 , kernel
 }:
 
 let
   isCross = with kernel.stdenv; hostPlatform != buildPlatform;
 
-  toTOMLFile = name: expr: runCommand name {
-    nativeBuildInputs = [
-      remarshal
-    ];
-    json = builtins.toJSON expr;
-    passAsFile = [ "json" ];
-  } ''
-    remarshal -if json -of toml -i $jsonPath -o $out
-  '';
-
   target = "aarch64-unknown-none";
 
   profile = "kmod";
 
-  sysroot = runCommand "sysroot" {} ''
-    d=$out/lib/rustlib/${target}/lib
-    mkdir -p $d
-    cp ${kernel.dev}/rust/{*.rmeta,*.o} $d
-  '';
+  # sysroot = runCommand "sysroot" {} ''
+  #   d=$out/lib/rustlib/${target}/lib
+  #   mkdir -p $d
+  #   cp ${kernel.dev}/rust/lib{core,alloc}.rmeta $d
+  # '';
 
-  config = toTOMLFile "config.toml" {
+  config = buildPackages.writers.writeTOML "config.toml" {
     unstable.unstable-options = true;
+
     target."${target}".rustflags = [
       # "-Z" "unstable-options"
 
-      "--sysroot=${sysroot}"
-      # "--extern=force:alloc"
+      # "--sysroot=${sysroot}"
+      "--sysroot=/dev/null"
+
+      "--extern=alloc"
       "--extern=kernel"
       "-L${kernel.dev}/rust"
 
-      "-Zbinary_dep_depinfo=y"
-      "-Cembed-bitcode=n" "-Cforce-unwind-tables=n" "-Csymbol-mangling-version=v0" "-Crelocation-model=static"
-      "-Zfunction-sections=n"
-      "-Ctarget-feature=-neon"
-      "-Zbranch-protection=pac-ret"
+      "-Crelocation-model=static"
+      "-Csymbol-mangling-version=v0"
+      "-Cembed-bitcode=n"
+      "-Cforce-unwind-tables=n"
       "-Cforce-frame-pointers=y"
+      "-Ctarget-feature=-neon"
+
+      "-Zbinary_dep_depinfo=y"
+      "-Zbranch-protection=pac-ret"
+      "-Zfunction-sections=n"
 
       "--emit=obj"
 
@@ -90,8 +87,7 @@ let
       d=target/${target}/${profile}/deps
 
       mkdir $out
-      cp -r $d $out/deps
-      $CC -r -o $out/package.o -Wl,--whole-archive $out/deps/*.o
+      $CC -r -o $out/package.o -Wl,--whole-archive $d/*.o
     '';
 
     passthru = {
@@ -140,7 +136,8 @@ kernel.stdenv.mkDerivation (kernel.moduleEnv // {
   '';
 
   passthru = {
-    inherit sysroot package;
+    inherit package;
+    # inherit sysroot;
   };
 })
 
